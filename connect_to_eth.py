@@ -1,7 +1,7 @@
 import json
 from web3 import Web3
 from web3.providers.rpc import HTTPProvider
-from web3.middleware import geth_poa_middleware
+from web3.middleware import ExtraDataToPOAMiddleware
 
 '''
 If you use one of the suggested infrastructure providers, the url will be of the form
@@ -19,8 +19,7 @@ def connect_to_eth():
 
 def connect_with_middleware(contract_json):
     with open(contract_json, "r") as f:
-        d = json.load(f)
-        d = d["bsc"]
+        d = json.load(f)["bsc"]
         address = d["address"]
         abi = d["abi"]
 
@@ -29,8 +28,8 @@ def connect_with_middleware(contract_json):
     w3 = Web3(HTTPProvider(bnb_rpc_url))
     assert w3.is_connected(), "Failed to connect to BNB testnet RPC"
 
-   
-    w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+    w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
 
 
     contract = w3.eth.contract(
